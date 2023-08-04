@@ -27,7 +27,7 @@ public class TelaContaCorrente {
             System.out.println("4- Buscar");
             System.out.println("5- Gerar Relatório Geral de Contas");
             System.out.println("6- Sair");
-            System.out.print("Escolha uma opção: ");
+            System.out.print("Por favor, escolha uma opção: ");
 
             opcao = scanner.nextInt();
             if (opcao == 1) {
