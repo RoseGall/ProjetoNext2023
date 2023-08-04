@@ -6,7 +6,7 @@ import br.edu.cesarschool.next.oo.entidade.Produto;
 import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
 
 public class DAOProduto {
-	private CadastroObjetos cadastro = new CadastroObjetos();
+	private CadastroObjetos cadastro = new CadastroObjetos(Produto.class);
 	public boolean incluir(Produto prod) {
 		Produto prodBusca = buscar(prod.getCodigo());
 		if (prodBusca != null) {
