@@ -1,74 +1,60 @@
 package br.edu.cesarschool.next.oo.entidade;
 
 import java.io.Serializable;
+public class ContaCorrente extends RegistroIdentificavel implements Serializable {
 
-public class ContaCorrente implements Serializable {
     private static final long serialVersionUID = 1L;
-
     private String numero;
-    private double saldo; 
-    private String nomeDoCorrentista;
-    
-    
-    
-    
+    private double saldo;
+    private String nomeCorrentista;
+
     public ContaCorrente() {
     }
 
-
-    public ContaCorrente(String numero, double saldo, String nomeDoCorrentista) {
+    public ContaCorrente(String numero, double saldo, String nomeCorrentista) {
         this.numero = numero;
         this.saldo = saldo;
-        this.nomeDoCorrentista = nomeDoCorrentista;
+        this.nomeCorrentista = nomeCorrentista;
     }
-
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
-
 
     public String getNumero() {
         return numero;
     }
 
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public String getNomeCorrentista() {
+        return nomeCorrentista;
+    }
 
     public void setNumero(String numero) {
         this.numero = numero;
     }
 
-
-    public double getSaldo() {
-        return saldo;
+    public void setNomeCorrentista(String nomeCorrentista) {
+        this.nomeCorrentista = nomeCorrentista;
     }
 
+    public void creditar(double valor) {
 
-   
-    public String getNomeDoCorrentista() {
-        return nomeDoCorrentista;
+        saldo += valor;
     }
 
+    public void debitar(double valor) {
 
-    public void setNomeDoCorrentista(String nomeDoCorrentista) {
-        this.nomeDoCorrentista = nomeDoCorrentista;
-    }
-
-    
-    public void creditar (double valor){
-
-        saldo = saldo + valor; 
-
-    }
-    
-    public void debitar (double valor){
-
-        saldo = saldo - valor;
+        saldo -= valor;
     }
 
     @Override
-    public String toString (){
-        return "\nNúmero da conta: " + numero + "\nSaldo atual: " + saldo + "\nNome do correntista: " + nomeDoCorrentista;
-        //Sobrescreve a função toString e formata conforme acima ("toString" é uma classe herdade da classe object)
+    public String toString() {
+
+        return "\nNúmero da conta: " + numero + "\nSaldo atual: " + saldo + "\nNome do correntista: " + nomeCorrentista;
     }
 
+    @Override
+    public String obterChave() {
+        return numero;
+    }
 }

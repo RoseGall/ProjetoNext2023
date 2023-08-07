@@ -1,33 +1,36 @@
 package br.edu.cesarschool.next.oo.apresentacao;
 
+import br.edu.cesarschool.next.oo.entidade.ContaCorrente;
+import br.edu.cesarschool.next.oo.entidade.ContaPoupanca;
+import br.edu.cesarschool.next.oo.entidade.Produto;
+import br.edu.cesarschool.next.oo.negocio.MediatorContaCorrente;
+
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-import br.edu.cesarschool.next.oo.entidade.ContaCorrente;
-import br.edu.cesarschool.next.oo.entidade.ContaPoupanca;
-import br.edu.cesarschool.next.oo.negocio.MediatorContaCorrente;
-
 public class TelaContaCorrente {
 
-    MediatorContaCorrente mediatorContaCorrente = new MediatorContaCorrente();
+    private static final Scanner scanner = new Scanner(System.in);
 
-    private static final Scanner scanner = new Scanner(System.in); //Faz a leitura da entrada do usuário
+    MediatorContaCorrente mediatorContaCorrente = new MediatorContaCorrente();
 
     public TelaContaCorrente() {
     }
 
-    public void iniciarTela (){
+    public void iniciarTela() {
 
         int opcao = 0;
         do {
-            System.out.println("1- Incluir conta");
+            System.out.println("\n1- Incluir conta");
             System.out.println("2- Creditar");
             System.out.println("3- Debitar");
             System.out.println("4- Buscar");
             System.out.println("5- Gerar Relatório Geral de Contas");
-            System.out.println("6- Sair");
-            System.out.print("Por favor, escolha uma opção: ");
+            System.out.println("6- Excluir conta");
+            System.out.println("7- Sair");
+            System.out.print("Escolha uma opção: ");
 
             opcao = scanner.nextInt();
             if (opcao == 1) {
@@ -41,18 +44,20 @@ public class TelaContaCorrente {
             } else if (opcao == 5) {
                 gerarRelatorioGeralDeContas();
             } else if (opcao == 6) {
+                excluir();
+            }else if (opcao == 7) {
                 System.out.println("--- Programa encerrado ---");
-                return; //return dentro do loop, sai do loop
+                return;
             } else {
                 System.out.println("Opçcão inválida. Tente novamente.\n");
             }
         } while(true);
-
     }
-    
-    private void incluir (){
+
+    private void incluir() {
+
         System.out.print("Informe o número da conta: ");
-        String numero = scanner.next(); // já declara e recebe a info na variável - ".next": vai receber a próxima info que vier do sistema
+        String numero = scanner.next();
         System.out.print("Informe o nome do titular da conta: ");
         String nomeCorrentista = scanner.next();
         System.out.print("Informe o saldo inicial da conta: ");
@@ -60,87 +65,94 @@ public class TelaContaCorrente {
         System.out.print("É uma conta poupanca? 1 - Sim  2 - Não ");
         String opcaoPoupanca = scanner.next();
 
-        if(Objects.equals(opcaoPoupanca , "1")){
-            //compara o que tem na opçaPoupanca com a String "1". Se for ok, ele entra no if
-
-            System.out.println("Informe o percentual de bônus: ");
-            double percentualDeBonus = scanner.nextDouble();
-            ContaPoupanca contaPoupanca = new ContaPoupanca(numero, saldo, nomeCorrentista, percentualDeBonus);
-            
+        if (Objects.equals(opcaoPoupanca, "1")) {
+            double percentualBonus = 0;
+            System.out.print("Informe o percentual de bônus: ");
+            percentualBonus = scanner.nextDouble();
+            ContaPoupanca contaPoupanca = new ContaPoupanca(numero, saldo, nomeCorrentista, percentualBonus);
             String mensagem = mediatorContaCorrente.incluir(contaPoupanca);
-            //chamar o método incluir do mediator, e verificar se a mensagem retornada é nula, indicando inclusão realizada com sucesso.
 
-            if( mensagem == null){
-                System.out.println("Conta Poupança incluída com sucesso");
-            }else{
-                System.out.println(mensagem); //imprimir o que vier na variável mensagem
+            if (mensagem == null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM, dd, yyyy HH:mm:ss");
+                String formattedDateTime = contaPoupanca.getDataHoraCriacao().format(formatter);
+                System.out.println("Conta poupança incluída com sucesso. Data e hora: " + formattedDateTime + "\n");
+            } else {
+                System.out.println(mensagem);
             }
 
-        }else{
-            ContaCorrente contaCorrente = new ContaCorrente(numero,saldo, nomeCorrentista);
+        } else {
+            ContaCorrente contaCorrente = new ContaCorrente(numero, saldo, nomeCorrentista);
             String mensagem = mediatorContaCorrente.incluir(contaCorrente);
-            //chamar o método incluir do mediator, e verificar se a mensagem retornada é nula, indicando inclusão realizada com sucesso.
 
-            if( mensagem == null){
-                System.out.println("Conta Corrente incluída com sucesso");
-            }else{
-                System.out.println(mensagem); //imprimir o que vier na variável mensagem
+            if (mensagem == null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM, dd, yyyy HH:mm:ss");
+                String formattedDateTime = contaCorrente.getDataHoraCriacao().format(formatter);
+                System.out.println("Conta corrente incluída com sucesso. Data e hora: " + formattedDateTime + "\n");
+            } else {
+                System.out.println(mensagem);
             }
         }
-
-
     }
 
-    private void creditar(){
+    private void creditar() {
+
         System.out.print("\nInforme o número da conta para crédito: ");
         String numero = scanner.next();
         System.out.print("Informe o valor a ser creditado: ");
         double valor = scanner.nextDouble();
 
-        String mensagem = mediatorContaCorrente.creditar(valor, numero); //Mediator que faz o crédito
+        String mensagem = mediatorContaCorrente.creditar(valor, numero);
         if (mensagem == null) {
             System.out.println("Crédito realizado com sucesso.\n");
-        } else {  
+        } else {
             System.out.println(mensagem);
-        }    
+        }
     }
 
-     private void debitar(){
+    private void debitar() {
+
         System.out.print("\nInforme o número da conta para débito: ");
         String numero = scanner.next();
         System.out.print("Informe o valor a ser debitado: ");
         double valor = scanner.nextDouble();
 
-        String mensagem = mediatorContaCorrente.debitar(valor, numero); //Mediator que faz o débito
+        String mensagem = mediatorContaCorrente.debitar(valor, numero);
         if (mensagem == null) {
             System.out.println("Débito realizado com sucesso.\n");
-        } else {  
+        } else {
             System.out.println(mensagem);
-        }    
+        }
     }
 
-    private void buscar (){
-        System.out.println("Informe o número da conta a ser buscado: ");
+    private void buscar() {
+
+        System.out.print("\nInforme o número da conta a ser buscada: ");
         String numero = scanner.next();
-        ContaCorrente conta = mediatorContaCorrente.buscar(numero); //Mediator que faz a busca
-        //Todas as operações, de fato, são feitas pela camanda de negócio
-        if (conta == null){
-            System.out.println("Conta inexistente");
-        }else{
-            System.out.println(conta);
-            //Imprime corretamente pq foi feita a sobrescirta do método toString da Classe Conta Corrente
-        }
 
+        ContaCorrente conta = mediatorContaCorrente.buscar(numero);
+        if (conta == null) {
+            System.out.println("Conta não existente.\n");
+        } else {
+            System.out.println(conta);
+        }
     }
 
-    private void gerarRelatorioGeralDeContas (){
-        List<ContaCorrente> contas = mediatorContaCorrente.gerarRelatorioGeral();
-        //Esse método mediatorContaCorrente.gerarRelatorioGeral()  é quem gera a lista de contas
-        for (ContaCorrente conta : contas){
-            //Esse "for" faz o seguinte: para cada objeto do tipo ContaCorrente na lista chamada contas, faça uma determinada ação
-            //Esse conta (sem o "s") pode ser qq nome. É uma referência para um objeto que está dentro da lista "contas" (depois dos ":")
-            System.out.println(conta); //imprime cada item (conta) do array "contas"
-        }
+    private void excluir() {
 
+        System.out.print("Informe o número da conta a ser excluída: ");
+        String numero = scanner.next();
+        String mensagem = mediatorContaCorrente.excluir(numero);
+        if (mensagem == null) {
+            System.out.println("Conta excluida com sucesso.");
+        } else {
+            System.out.println(mensagem);
+        }
+    }
+    private void gerarRelatorioGeralDeContas() {
+
+        List<ContaCorrente> contas = mediatorContaCorrente.gerarRelatorioGeral();
+        for (ContaCorrente conta : contas){
+            System.out.println(conta);
+        }
     }
 }
